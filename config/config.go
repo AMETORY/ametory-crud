@@ -8,8 +8,13 @@ import (
 
 // ServerConfiguration holds the server-related config values
 type ServerConfiguration struct {
-	Host string `mapstructure:"host"`
-	Port string `mapstructure:"port"`
+	AppName   string `mapstructure:"app_name"`
+	AppDesc   string `mapstructure:"app_desc"`
+	Version   string `mapstructure:"version"`
+	ApiURL    string `mapstructure:"api_url"`
+	Host      string `mapstructure:"host"`
+	Port      string `mapstructure:"port"`
+	SecretKey string `mapstructure:"secret_key"`
 }
 
 // DatabaseConfiguration holds the database-related config values

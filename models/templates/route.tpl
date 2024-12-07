@@ -3,11 +3,20 @@ package routes
 import (
 	"ametory-crud/controllers"
 	"github.com/gin-gonic/gin"
+	mid "ametory-crud/middlewares"
 )
 
-func Register{{ .Feature }}Routes(r *gin.RouterGroup) {
-	r.GET("/{{ .Feature | ToLower }}", controllers.Get{{ .Feature }})
-	r.POST("/{{ .Feature | ToLower }}", controllers.Create{{ .Feature }})
-	r.PUT("/{{ .Feature | ToLower }}/:id", controllers.Update{{ .Feature }})
-	r.DELETE("/{{ .Feature | ToLower }}/:id", controllers.Delete{{ .Feature }})
+func init() {
+	Register("{{ .ModelName }}Routes", func(router *gin.RouterGroup) {
+		var group = router.Group("{{ .ModelName }}")
+		group.Use(mid.AuthMiddleware())
+		{
+			group.GET("", controllers.Get{{ .ModelName }})
+			group.GET("/:id", controllers.GetOne{{ .ModelName }})
+			group.POST("", controllers.Create{{ .ModelName }})
+			group.PUT("/:id", controllers.Update{{ .ModelName }})
+			group.DELETE("/:id", controllers.Delete{{ .ModelName }})
+		}
+	})
 }
+

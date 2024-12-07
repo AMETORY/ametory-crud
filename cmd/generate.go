@@ -6,6 +6,8 @@ import (
 	"strings"
 	"text/template"
 
+	"log"
+
 	"github.com/spf13/cobra"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -14,17 +16,39 @@ import (
 var generateCmd = &cobra.Command{
 	Use:   "generate [type] [name]",
 	Short: "Generate a new model, controller, or route",
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.MinimumNArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
 		generateType := strings.ToLower(args[0])
 		name := cases.Title(language.English).String(args[1])
+		fields := []Field{}
+		for _, arg := range args[2:] {
+			parts := strings.Split(arg, ":")
+			fmt.Println(parts)
+			if len(parts) != 3 {
+				fmt.Printf("Invalid field format: %s\n", arg)
+				return
+			}
+			field := Field{
+				ModelName: name,
+				Name:      cases.Title(language.English).String(parts[0]),
+				Type:      parts[1],
+				DBType:    parts[2],
+				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(parts[0], "_", "")),
+			}
+			fields = append(fields, field)
+		}
 		switch generateType {
 		case "model":
-			generateModel(name, []string{})
+
+			generateModel(name, fields)
+		case "request":
+
+			generateRequestResponse(name, fields)
 		case "controller":
-			generateController(name)
+			generateController(name, fields)
 		case "route":
 			generateRoute(name)
+
 		default:
 			fmt.Println("Invalid type. Use 'model', 'controller', or 'route'.")
 		}
@@ -39,105 +63,159 @@ func init() {
 }
 
 // Fungsi untuk menghasilkan file model
-func generateModel(feature string, colDefs []string) {
-	// Menyiapkan template untuk model
-	tmpl, err := template.New("model").ParseFiles("models/templates/model.tpl")
+
+// ModelData holds the information about the model and its fields
+type ModelData struct {
+	ModelName string
+	Fields    []Field
+}
+
+// Field holds details about each field in the model
+type Field struct {
+	ModelName string
+	Name      string
+	Type      string
+	DBType    string
+	Tag       string
+}
+
+func generateModel(modelName string, fields []Field) error {
+	// Define the model data
+	modelData := ModelData{
+		ModelName: modelName,
+		Fields:    fields,
+	}
+
+	// Open the template file
+	tmpl, err := template.ParseFiles("models/templates/model.tpl") // ensure template file exists
 	if err != nil {
-		fmt.Printf("Error parsing model template: %v\n", err)
-		return
+		log.Fatalf("Error loading template: %v", err)
+		return err
 	}
 
-	// Menyiapkan data untuk template
-	data := struct {
-		Feature string
-		Columns []string
-	}{
-		Feature: feature,
-		Columns: colDefs,
-	}
-
-	// Menyimpan hasil render template ke file
-	fileName := fmt.Sprintf("models/%s.go", feature)
+	// Create the model file
+	fileName := fmt.Sprintf("models/%s.go", modelName)
 	file, err := os.Create(fileName)
 	if err != nil {
-		fmt.Printf("Error creating model file: %v\n", err)
-		return
+		log.Fatalf("Error creating model file: %v", err)
+		return err
 	}
 	defer file.Close()
 
-	err = tmpl.Execute(file, data)
+	// Execute the template and generate the model
+	err = tmpl.Execute(file, modelData)
 	if err != nil {
-		fmt.Printf("Error executing model template: %v\n", err)
-		return
+		log.Fatalf("Error executing template: %v", err)
+		return err
 	}
 
-	fmt.Printf("Model file created: %s\n", fileName)
+	fmt.Printf("Model %s generated successfully!\n", modelName)
+	return nil
+}
+func generateRequestResponse(modelName string, fields []Field) error {
+	// Define the model data
+	modelData := ModelData{
+		ModelName: modelName,
+		Fields:    fields,
+	}
+
+	// Open the template file
+	tmpl, err := template.New("request_response.tpl").Funcs(template.FuncMap{
+		"ToLower": strings.ToLower,
+	}).ParseFiles("models/templates/request_response.tpl") // ensure template file exists
+	if err != nil {
+		log.Fatalf("Error loading template: %v", err)
+		return err
+	}
+
+	// Create the model file
+	fileName := fmt.Sprintf("requests/%sReq.go", modelName)
+	file, err := os.Create(fileName)
+	if err != nil {
+		log.Fatalf("Error creating requests file: %v", err)
+		return err
+	}
+	defer file.Close()
+
+	// Execute the template and generate the model
+	err = tmpl.Execute(file, modelData)
+	if err != nil {
+		log.Fatalf("Error executing template: %v", err)
+		return err
+	}
+
+	fmt.Printf("Model %s generated successfully!\n", modelName)
+	return nil
 }
 
 // Fungsi untuk menghasilkan file controller
-func generateController(feature string) {
-	// Menyiapkan template untuk controller
-	tmpl, err := template.New("controller").ParseFiles("models/templates/controller.tpl")
+func generateController(feature string, fields []Field) error {
+	// Define the controller data
+	modelData := ModelData{
+		ModelName: feature,
+		Fields:    fields,
+	}
+
+	// Open the template file
+	tmpl, err := template.New("controller.tpl").Funcs(template.FuncMap{
+		"ToLower": strings.ToLower,
+	}).ParseFiles("models/templates/controller.tpl") // ensure template file exists
 	if err != nil {
-		fmt.Printf("Error parsing controller template: %v\n", err)
-		return
+		log.Fatalf("Error loading template: %v", err)
+		return err
 	}
 
-	// Menyiapkan data untuk template
-	data := struct {
-		Feature string
-	}{
-		Feature: feature,
-	}
-
-	// Menyimpan hasil render template ke file
-	fileName := fmt.Sprintf("controllers/%s_controller.go", feature)
+	// Create the controller file
+	fileName := fmt.Sprintf("controllers/%sController.go", feature)
 	file, err := os.Create(fileName)
 	if err != nil {
-		fmt.Printf("Error creating controller file: %v\n", err)
-		return
+		log.Fatalf("Error creating controller file: %v", err)
+		return err
 	}
 	defer file.Close()
 
-	err = tmpl.Execute(file, data)
+	// Execute the template and generate the controller
+	err = tmpl.Execute(file, modelData)
 	if err != nil {
-		fmt.Printf("Error executing controller template: %v\n", err)
-		return
+		log.Fatalf("Error executing template: %v", err)
+		return err
 	}
 
-	fmt.Printf("Controller file created: %s\n", fileName)
+	fmt.Printf("Controller %s generated successfully!\n", feature)
+	return nil
 }
 
 // Fungsi untuk menghasilkan file route
-func generateRoute(feature string) {
-	// Menyiapkan template untuk route
-	tmpl, err := template.New("route").ParseFiles("models/templates/route.tpl")
+func generateRoute(feature string) error {
+
+	// Define the controller data
+	modelData := ModelData{
+		ModelName: feature,
+	}
+
+	// Open the template file
+	tmpl, err := template.ParseFiles("models/templates/route.tpl") // ensure template file exists
 	if err != nil {
-		fmt.Printf("Error parsing route template: %v\n", err)
-		return
+		log.Fatalf("Error loading template: %v", err)
+		return err
 	}
 
-	// Menyiapkan data untuk template
-	data := struct {
-		Feature string
-	}{
-		Feature: feature,
-	}
-
-	// Menyimpan hasil render template ke file
-	fileName := fmt.Sprintf("routes/%s_route.go", feature)
+	// Create the controller file
+	fileName := fmt.Sprintf("routes/%sRoute.go", feature)
 	file, err := os.Create(fileName)
 	if err != nil {
-		fmt.Printf("Error creating route file: %v\n", err)
-		return
+		log.Fatalf("Error creating route file: %v", err)
+		return err
 	}
 	defer file.Close()
 
-	err = tmpl.Execute(file, data)
+	// Execute the template and generate the sRoute
+	err = tmpl.Execute(file, modelData)
 	if err != nil {
-		fmt.Printf("Error executing route template: %v\n", err)
-		return
+		log.Fatalf("Error executing template: %v", err)
+		return err
 	}
 
-	fmt.Printf("Route file created: %s\n", fileName)
+	fmt.Printf("Controller %s generated successfully!\n", feature)
+	return nil
 }

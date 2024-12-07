@@ -8,18 +8,21 @@ import (
 	"os"
 )
 
-func main() {
+func init() {
 	// Load environment variables
 	_, err := config.InitConfig()
 	if err != nil {
 		log.Fatalf("Error initializing config: %s", err)
 	}
-
-	// Use config values
-
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
+
+}
+
+func main() {
+
+	// Use config values
 
 	// Execute CLI
 	if err := cmd.Execute(); err != nil {

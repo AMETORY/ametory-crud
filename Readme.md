@@ -111,12 +111,12 @@ The generate-from-excel command allows you to create models, controllers, and ro
 #### Excel File Format
 Your Excel should have the following columns:
 
-| Feature | Column Name | Column Type | Constraints |
-|---------|-------------|-------------|-------------|
-| User    | id          | int         | primaryKey, not null |
-| User    | name        | varchar(100)| not null      |
-| Post    | id          | int         | primaryKey, not null |
-| Post    | content     | text        | not null      |
+| Model Name | Field Name | Field Type | DB Type |
+|------------|------------|------------|---------|
+| User       | Name       | string     | varchar(255) |
+| User       | Age        | int        | int     |
+| Product    | Name       | string     | varchar(255) |
+| Product    | Price      | float      | decimal(10,2) |
 
 Each row represents a column in a table for a specific feature.
 
@@ -191,14 +191,14 @@ ametory-crud/
 
 #### Example Excel File
 Input Example (```data.xlsx```)
-| Feature  | Column Name | Column Type | Constraints         |
-|----------|-------------|-------------|---------------------|
-| User     | id          | int         | primaryKey, not null |
-| User     | name        | varchar(100)| not null            |
-| User     | email       | varchar(100)| unique, not null    |
-| Product  | id          | int         | primaryKey, not null |
-| Product  | name        | varchar(100)| not null            |
-| Product  | price       | decimal     | not null            |
+| Model Name | Field Name | Field Type | DB Type |
+|------------|------------|------------|---------|
+| User       | ID         | int        | int     |
+| User       | Name       | string     | varchar(255) |
+| User       | Age        | int        | int     |
+| Product    | ID         | int        | int     |
+| Product    | Name       | string     | varchar(255) |
+| Product    | Price      | float      | decimal(10,2) |
 
 #### Customization
 You can customize the templates for models, controllers, and routes by modifying the files in ```models/templates/```:

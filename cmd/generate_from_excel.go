@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/xuri/excelize/v2"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var excelPath string
@@ -22,44 +25,71 @@ var generateExcelCmd = &cobra.Command{
 	},
 }
 
-func generateFromExcel(path string) {
+func generateFromExcel(path string) error {
+	var fields []Field
+
+	// Open the Excel file
 	f, err := excelize.OpenFile(path)
 	if err != nil {
-		fmt.Printf("Error opening Excel file: %v\n", err)
-		return
+		return err
 	}
-	defer f.Close()
 
-	rows, err := f.GetRows(f.GetSheetName(0))
+	// Get the sheet names (assuming the data is in the first sheet)
+	sheet := f.GetSheetName(0)
+
+	// Iterate through rows (skip the header row)
+	rows, err := f.GetRows(sheet)
+
+	// fmt.Println(path, rows)
 	if err != nil {
-		fmt.Printf("Error reading rows: %v\n", err)
-		return
+		return err
 	}
 
-	features := map[string][]string{}
-	columns := map[string][]string{}
-
+	// Loop over rows
 	for i, row := range rows {
+		// Skip header row
 		if i == 0 {
 			continue
 		}
 
-		feature := row[0]
-		columnName := row[1]
-		columnType := row[2]
-		constraints := row[3]
-
-		colDef := fmt.Sprintf("%s %s `%s`", columnName, columnType, generateGORMTag(constraints))
-		features[feature] = append(features[feature], colDef)
-		columns[feature] = append(columns[feature], columnName)
+		// Read the data from each row
+		if len(row) >= 4 {
+			field := Field{
+				ModelName: row[0],
+				Name:      row[1],
+				Type:      row[2],
+				DBType:    row[3],
+				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(row[1], "_", "")),
+			}
+			fields = append(fields, field)
+		}
 	}
 
-	for feature, colDefs := range features {
-		fmt.Printf("Generating files for feature: %s\n", feature)
-		generateModel(feature, colDefs)
-		generateController(feature)
-		generateRoute(feature)
+	modelFields := groupFieldsByModel(fields)
+
+	// Generate models based on the grouped data
+	for modelName, fields := range modelFields {
+		err := generateModel(modelName, fields)
+		if err != nil {
+			log.Fatalf("Error generating model %s: %s", modelName, err)
+		}
+		err = generateRequestResponse(modelName, fields)
+		if err != nil {
+			log.Fatalf("Error generating request %s: %s", modelName, err)
+		}
+		generateController(modelName, fields)
+		generateRoute(modelName)
 	}
+
+	return nil
+}
+
+func groupFieldsByModel(fields []Field) map[string][]Field {
+	modelFields := make(map[string][]Field)
+	for _, field := range fields {
+		modelFields[field.ModelName] = append(modelFields[field.ModelName], field)
+	}
+	return modelFields
 }
 
 func generateGORMTag(constraints string) string {
