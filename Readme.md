@@ -132,6 +132,11 @@ This will generate the following files for each feature:
 - controllers/Feature_controller.go
 - routes/Feature_route.go
 
+#### Rename Module
+```bash
+go run main.go rename new_module  
+```
+
 ### 3. Migrate Database
 To apply migrations to the database, use the following command:
 
