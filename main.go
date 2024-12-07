@@ -2,15 +2,21 @@ package main
 
 import (
 	"ametory-crud/cmd"
+	"ametory-crud/config"
 	"fmt"
+	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
 	// Load environment variables
-	err := godotenv.Load()
+	_, err := config.InitConfig()
+	if err != nil {
+		log.Fatalf("Error initializing config: %s", err)
+	}
+
+	// Use config values
+
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}

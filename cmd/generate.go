@@ -3,8 +3,40 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 	"text/template"
+
+	"github.com/spf13/cobra"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
+
+var generateCmd = &cobra.Command{
+	Use:   "generate [type] [name]",
+	Short: "Generate a new model, controller, or route",
+	Args:  cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		generateType := strings.ToLower(args[0])
+		name := cases.Title(language.English).String(args[1])
+		switch generateType {
+		case "model":
+			generateModel(name, []string{})
+		case "controller":
+			generateController(name)
+		case "route":
+			generateRoute(name)
+		default:
+			fmt.Println("Invalid type. Use 'model', 'controller', or 'route'.")
+		}
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(generateCmd)
+	rootCmd.AddCommand(generateExcelCmd)
+	generateExcelCmd.Flags().StringVar(&excelPath, "path", "", "Path to the Excel file")
+}
 
 // Fungsi untuk menghasilkan file model
 func generateModel(feature string, colDefs []string) {

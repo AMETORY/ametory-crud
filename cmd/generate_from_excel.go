@@ -22,11 +22,6 @@ var generateExcelCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(generateExcelCmd)
-	generateExcelCmd.Flags().StringVar(&excelPath, "path", "", "Path to the Excel file")
-}
-
 func generateFromExcel(path string) {
 	f, err := excelize.OpenFile(path)
 	if err != nil {

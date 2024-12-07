@@ -42,13 +42,49 @@ go mod tidy
 ### 3. Configure .env
 Create a ```.env``` file in the root of the project and define your database credentials. Here is an example:
 
-```ini
-DB_TYPE=postgres       # or 'mysql'
-DB_HOST=localhost
-DB_PORT=5432           # For PostgreSQL, use 3306 for MySQL
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
+```yaml
+server:
+  host: "localhost"
+  port: 8080
+
+database:
+  type: "postgres"
+  host: "localhost"
+  port: 5432
+  user: "db_user"
+  password: "db_password"
+  name: "my_database"
+
+scheduler:
+  enabled: true
+  interval: 10
+
+mailer:
+  smtp_host: "smtp.mailtrap.io"
+  smtp_port: 587
+  username: "user@mailtrap"
+  password: "password"
+
+s3:
+  access_key: "your_access_key"
+  secret_key: "your_secret_key"
+  bucket: "your_bucket_name"
+  region: "us-west-1"
+
+es:
+  host: "localhost"
+  port: 9200
+
+redis:
+  host: "localhost"
+  port: 6379
+  password: "redis_password"
+  db: 0
+
+sms:
+  account_sid: "your_account_sid"
+  auth_token: "your_auth_token"
+  phone_number: "+123456789"
 ```
 For MySQL:
 
@@ -143,7 +179,7 @@ ametory-crud/
 ├── main.go
 ├── go.mod
 ├── go.sum
-└── .env
+└── .env.yaml
 ```
 
 #### Explanation of Folders and Files
