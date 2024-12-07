@@ -33,6 +33,9 @@ func renameFiles(moduleName string) error {
 		}
 		return nil
 	})
+
+	filePaths = append(filePaths, "go.mod")
+	filePaths = append(filePaths, "go.sum")
 	if err != nil {
 		return err
 	}
