@@ -19,8 +19,10 @@ func Get{{ .ModelName }}(c *gin.Context) {
     var {{ .ModelName | ToLower }} []mdl.{{ .ModelName }}
 
     limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-    offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+    page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
     search := c.DefaultQuery("search", "")
+
+    offset := (page - 1) * limit
 
     // Get the total count of records
     var count int64
@@ -43,7 +45,7 @@ func Get{{ .ModelName }}(c *gin.Context) {
 		Pagination: mdl.PaginationResponse{
 			Total:  count,
 			Limit:  limit,
-			Offset: offset,
+			Page:  page,
 		},
         Message: "success retrived {{ .ModelName | ToLower }} data",
 		Data: {{ .ModelName | ToLower }},

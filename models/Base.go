@@ -14,9 +14,9 @@ type Base struct {
 	DeletedAt *time.Time `gorm:"index" json:"-"`
 }
 type PaginationResponse struct {
-	Total  int64 `json:"total"`
-	Limit  int   `json:"limit"`
-	Offset int   `json:"offset"`
+	Total int64 `json:"total"`
+	Limit int   `json:"limit"`
+	Page  int   `json:"page"`
 }
 
 type GeneralResp struct {
