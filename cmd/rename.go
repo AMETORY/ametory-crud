@@ -36,6 +36,11 @@ func renameFiles(moduleName string) error {
 
 	filePaths = append(filePaths, "go.mod")
 	filePaths = append(filePaths, "go.sum")
+	filePaths = append(filePaths, "models/templates/controller.tpl")
+	filePaths = append(filePaths, "models/templates/model.tpl")
+	filePaths = append(filePaths, "models/templates/request_response.tpl")
+	filePaths = append(filePaths, "models/templates/route.tpl")
+
 	if err != nil {
 		return err
 	}
