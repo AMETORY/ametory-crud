@@ -13,8 +13,8 @@ var renameCmd = &cobra.Command{
 	Use:   "rename",
 	Short: "Rename Go.mod",
 	Run: func(cmd *cobra.Command, args []string) {
-		moduleName, _ := cmd.Flags().GetString("module-name")
-		if err := renameFiles(moduleName); err != nil {
+		// fmt.Println(args)
+		if err := renameFiles(args[0]); err != nil {
 			log.Fatal(err)
 		}
 	},
@@ -22,7 +22,7 @@ var renameCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(renameCmd)
-	renameCmd.Flags().String("module-name", "", "Name of the module to rename to")
+	// renameCmd.Flags().String("module-name", "", "Name of the module to rename to")
 }
 
 func renameFiles(moduleName string) error {
