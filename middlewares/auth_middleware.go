@@ -2,6 +2,8 @@ package middlewares
 
 import (
 	"ametory-crud/config"
+	"ametory-crud/database"
+	"ametory-crud/models"
 	"net/http"
 	"strings"
 
@@ -50,7 +52,15 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		authData := models.Auth{}
+		if err := database.DB.Where("id = ?", sub).First(&authData).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+			c.Abort()
+			return
+		}
 		c.Set("userId", sub)
+		c.Set("auth", authData)
 		c.Next()
 	}
 }

@@ -7,6 +7,7 @@ type {{.ModelName}}Request struct {
 
 // {{.ModelName}}Response represents the structure for {{.ModelName}} output (used for returning data)
 type {{.ModelName}}Response struct {
+	ID       string `json:"id"`
 	{{range .Fields}}{{.Name}} {{.Type}} `json:"{{.Name | ToLower}}"`
 	{{end}}}
 

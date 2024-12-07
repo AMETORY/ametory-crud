@@ -1,7 +1,10 @@
 package models
 
 import (
+	db "ametory-crud/database"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Base struct {
@@ -18,4 +21,17 @@ type PaginationResponse struct {
 
 type GeneralResp struct {
 	Message string `json:"msg"`
+}
+
+func FindUserByEmail(email string) (*Auth, error) {
+	var user Auth
+	result := db.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func generateUUID() string {
+	return uuid.NewString()
 }

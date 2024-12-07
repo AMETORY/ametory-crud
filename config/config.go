@@ -8,23 +8,25 @@ import (
 
 // ServerConfiguration holds the server-related config values
 type ServerConfiguration struct {
-	AppName   string `mapstructure:"app_name"`
-	AppDesc   string `mapstructure:"app_desc"`
-	Version   string `mapstructure:"version"`
-	ApiURL    string `mapstructure:"api_url"`
-	Host      string `mapstructure:"host"`
-	Port      string `mapstructure:"port"`
-	SecretKey string `mapstructure:"secret_key"`
+	AppName    string `mapstructure:"app_name"`
+	AppDesc    string `mapstructure:"app_desc"`
+	Version    string `mapstructure:"version"`
+	ApiURL     string `mapstructure:"api_url"`
+	Host       string `mapstructure:"host"`
+	Port       string `mapstructure:"port"`
+	SecretKey  string `mapstructure:"secret_key"`
+	ExpiredJWT int    `mapstructure:"expired_jwt"`
 }
 
 // DatabaseConfiguration holds the database-related config values
 type DatabaseConfiguration struct {
-	Type     string `mapstructure:"type"`
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	Name     string `mapstructure:"name"`
+	Type      string `mapstructure:"type"`
+	Host      string `mapstructure:"host"`
+	Port      int    `mapstructure:"port"`
+	User      string `mapstructure:"user"`
+	Password  string `mapstructure:"password"`
+	Name      string `mapstructure:"name"`
+	AuthTable string `mapstructure:"auth_table"`
 }
 
 // SchedulerConfiguration holds the scheduler-related config values

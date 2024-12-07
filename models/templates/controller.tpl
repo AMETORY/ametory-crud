@@ -45,6 +45,7 @@ func Get{{ .ModelName }}(c *gin.Context) {
 			Limit:  limit,
 			Offset: offset,
 		},
+        Message: "success retrived {{ .ModelName | ToLower }} data",
 		Data: {{ .ModelName | ToLower }},
 	})
 }

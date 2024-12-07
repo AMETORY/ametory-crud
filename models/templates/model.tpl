@@ -3,7 +3,7 @@ package models
 
 import (
 	"encoding/json"
-
+	"gorm.io/gorm"
 	"ametory-crud/requests"
 )
 
@@ -16,8 +16,14 @@ func init() {
 	RegisterModel(&{{.ModelName}}{})
 }
 
+func (p *{{.ModelName}}) BeforeCreate(tx *gorm.DB) error {
+	p.ID = generateUUID()
+	return nil
+}
+
 func (p {{.ModelName}}) MarshalJSON() ([]byte, error) {
 	return json.Marshal(requests.{{.ModelName}}Response{
+		ID:       p.ID,
 		{{range .Fields}}{{.Name}}: p.{{.Name}},
 		{{end}}})
 }
