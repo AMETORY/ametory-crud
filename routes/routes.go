@@ -23,6 +23,7 @@ func RegisterRoutes(r *gin.RouterGroup) {
 	docs.SwaggerInfo.Version = config.App.Server.AppDesc
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// Example: Register user routes here
 	// User routes can be added like this:

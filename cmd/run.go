@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jasonlvhit/gocron"
 	"github.com/spf13/cobra"
@@ -78,9 +79,18 @@ func initLog() {
 
 func startServer() {
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Origin frontend
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Load application routes
 	apiV1 := r.Group("/api/v1")
+
 	routes.RegisterRoutes(apiV1)
 
 	fmt.Printf("Server running on http://localhost:%s\n", config.App.Server.Port)

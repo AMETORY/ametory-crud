@@ -96,6 +96,10 @@ func Verification(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	if auth.VerifiedAt != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User already verified"})
+		return
+	}
 	now := time.Now()
 	auth.VerifiedAt = &now
 	if err := auth.Save(); err != nil {

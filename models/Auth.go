@@ -15,7 +15,7 @@ type Auth struct {
 	Email      string     `json:"email"`
 	Password   string     `json:"password"`
 	VerifiedAt *time.Time `json:"verified_at"`
-	RoleID     string     `json:"role_id"`
+	RoleID     *string    `json:"role_id"`
 	Role       Role       `gorm:"foreignKey:RoleID" json:"role"`
 }
 
