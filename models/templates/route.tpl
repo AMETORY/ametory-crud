@@ -11,11 +11,11 @@ func init() {
 		var group = router.Group("{{ .ModelName }}")
 		group.Use(mid.AuthMiddleware())
 		{
-			group.GET("", controllers.Get{{ .ModelName }})
-			group.GET("/:id", controllers.GetOne{{ .ModelName }})
-			group.POST("", controllers.Create{{ .ModelName }})
-			group.PUT("/:id", controllers.Update{{ .ModelName }})
-			group.DELETE("/:id", controllers.Delete{{ .ModelName }})
+			group.GET("", mid.PermissionMiddleware([]string{"read:{{ .ModelName | ToLower }}"}), controllers.Get{{ .ModelName }})
+			group.GET("/:id", mid.PermissionMiddleware([]string{"read:{{ .ModelName | ToLower }}"}), controllers.GetOne{{ .ModelName }})
+			group.POST("", mid.PermissionMiddleware([]string{"create:{{ .ModelName | ToLower }}"}), controllers.Create{{ .ModelName }})
+			group.PUT("/:id", mid.PermissionMiddleware([]string{"update:{{ .ModelName | ToLower }}"}), controllers.Update{{ .ModelName }})
+			group.DELETE("/:id", mid.PermissionMiddleware([]string{"delete:{{ .ModelName | ToLower }}"}), controllers.Delete{{ .ModelName }})
 		}
 	})
 }

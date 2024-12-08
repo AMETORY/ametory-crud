@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"ametory-crud/database"
+	"ametory-crud/models"
 	"fmt"
 	"os"
 	"strings"
@@ -18,6 +20,7 @@ var generateCmd = &cobra.Command{
 	Short: "Generate a new model, controller, or route",
 	Args:  cobra.MinimumNArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
+
 		generateType := strings.ToLower(args[0])
 		name := cases.Title(language.English).String(args[1])
 		fields := []Field{}
@@ -80,6 +83,25 @@ type Field struct {
 }
 
 func generateModel(modelName string, fields []Field) error {
+
+	var crudMethods = [...]string{"create", "read", "update", "delete"}
+
+	for _, crudMethod := range crudMethods {
+		// Add permission logic
+		permission := models.Permission{
+			Name:        fmt.Sprintf("%s %s", cases.Title(language.English).String(modelName), cases.Title(language.English).String(crudMethod)),
+			Description: fmt.Sprintf("Permission to %s %s", crudMethod, modelName),
+			Key:         fmt.Sprintf("%s:%s", strings.ToLower(crudMethod), strings.ToLower(modelName)),
+			Group:       strings.ToUpper(strings.ReplaceAll(modelName, " ", "_")),
+		}
+
+		// Assuming you have a function to add permissions to your system
+		err := database.DB.Create(&permission).Error
+		if err != nil {
+			log.Println("Error adding permission: %v", err)
+		}
+	}
+
 	// Define the model data
 	modelData := ModelData{
 		ModelName: modelName,
@@ -194,7 +216,9 @@ func generateRoute(feature string) error {
 	}
 
 	// Open the template file
-	tmpl, err := template.ParseFiles("models/templates/route.tpl") // ensure template file exists
+	tmpl, err := template.New("route.tpl").Funcs(template.FuncMap{
+		"ToLower": strings.ToLower,
+	}).ParseFiles("models/templates/route.tpl") // ensure template file exists
 	if err != nil {
 		log.Fatalf("Error loading template: %v", err)
 		return err

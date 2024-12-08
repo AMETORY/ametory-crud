@@ -32,6 +32,15 @@ func FindUserByEmail(email string) (*Auth, error) {
 	return &user, nil
 }
 
+func FindUserByID(id string) (*Auth, error) {
+	var user Auth
+	result := db.DB.Where("id = ?", id).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
 func generateUUID() string {
 	return uuid.NewString()
 }

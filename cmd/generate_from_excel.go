@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"ametory-crud/database"
 	"fmt"
 	"log"
 	"strings"
@@ -21,6 +22,7 @@ var generateExcelCmd = &cobra.Command{
 			fmt.Println("Please provide the path to the Excel file using --path")
 			return
 		}
+		database.ConnectDatabase()
 		generateFromExcel(excelPath)
 	},
 }

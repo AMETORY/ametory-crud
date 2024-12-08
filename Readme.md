@@ -39,21 +39,29 @@ Run the following command to install required Go dependencies:
 go mod tidy
 ```
 
-### 3. Configure .env
-Create a ```.env``` file in the root of the project and define your database credentials. Here is an example:
+### 3. Configure .env.yaml
+Create a ```.env.yaml``` file in the root of the project and define your database credentials. Here is an example:
 
 ```yaml
 server:
+  app_name: "Good Job"
   host: "localhost"
   port: 8080
+  app_desc: "Your app description here"
+  version: "1.0.0"
+  api_url: "http://localhost:8080/api"
+  front_end_url: "http://localhost:3000"
+  secret_key: "your_secret_key"
+  expired_jwt: 30
 
 database:
   type: "postgres"
   host: "localhost"
   port: 5432
-  user: "db_user"
-  password: "db_password"
-  name: "my_database"
+  user: "postgres"
+  password: "balakutak"
+  name: "crud"
+  auth_table: "users"
 
 scheduler:
   enabled: true
@@ -64,6 +72,8 @@ mailer:
   smtp_port: 587
   username: "user@mailtrap"
   password: "password"
+  sender: "Ametory Support"
+  from_to: "support@ametory.id"
 
 s3:
   access_key: "your_access_key"
@@ -85,6 +95,7 @@ sms:
   account_sid: "your_account_sid"
   auth_token: "your_auth_token"
   phone_number: "+123456789"
+
 ```
 For MySQL:
 

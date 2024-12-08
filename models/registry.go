@@ -12,6 +12,9 @@ func RegisterModel(model interface{}) {
 }
 
 func MigrateDatabase() {
+	db.DB.AutoMigrate(&Auth{})
+	db.DB.AutoMigrate(&Role{})
+	db.DB.AutoMigrate(&Permission{})
 	for _, model := range Models {
 		db.DB.AutoMigrate(model)
 	}

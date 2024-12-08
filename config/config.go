@@ -8,14 +8,15 @@ import (
 
 // ServerConfiguration holds the server-related config values
 type ServerConfiguration struct {
-	AppName    string `mapstructure:"app_name"`
-	AppDesc    string `mapstructure:"app_desc"`
-	Version    string `mapstructure:"version"`
-	ApiURL     string `mapstructure:"api_url"`
-	Host       string `mapstructure:"host"`
-	Port       string `mapstructure:"port"`
-	SecretKey  string `mapstructure:"secret_key"`
-	ExpiredJWT int    `mapstructure:"expired_jwt"`
+	AppName     string `mapstructure:"app_name"`
+	AppDesc     string `mapstructure:"app_desc"`
+	Version     string `mapstructure:"version"`
+	ApiURL      string `mapstructure:"api_url"`
+	FrontEndURL string `mapstructure:"front_end_url"`
+	Host        string `mapstructure:"host"`
+	Port        string `mapstructure:"port"`
+	SecretKey   string `mapstructure:"secret_key"`
+	ExpiredJWT  int    `mapstructure:"expired_jwt"`
 }
 
 // DatabaseConfiguration holds the database-related config values
@@ -41,6 +42,8 @@ type MailerConfiguration struct {
 	SMTPPort int    `mapstructure:"smtp_port"`
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
+	Sender   string `mapstructure:"sender"`
+	FromTo   string `mapstructure:"from_to"`
 }
 
 // S3Configuration holds the S3-related config values

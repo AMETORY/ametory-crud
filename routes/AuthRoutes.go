@@ -12,6 +12,8 @@ func init() {
 		group.Use()
 		{
 			group.POST("/Login", controllers.LoginAuth)
+			group.POST("/Registration", controllers.RegisterUser)
+			group.GET("/Verification/:id", controllers.Verification)
 
 		}
 	})
