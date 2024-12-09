@@ -1,152 +1,151 @@
 definitions:
-  models.GeneralResp:
+  requests.LoginReq:
     properties:
-      msg:
+      email:
+        type: string
+      password:
         type: string
     type: object
-  models.PaginationResponse:
+  requests.ProfileResponse:
     properties:
-      limit:
-        type: integer
-      offset:
-        type: integer
-      total:
-        type: integer
-    type: object
-  models.Product:
-    properties:
+      email:
+        type: string
       id:
         type: string
       name:
         type: string
-      price:
-        type: number
-    type: object
-  models.ProductResp:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.Product'
-        type: array
-      msg:
+      role:
+        $ref: '#/definitions/requests.RoleResponse'
+      role_id:
         type: string
-      pagination:
-        $ref: '#/definitions/models.PaginationResponse'
-    type: object
-  models.ProductSingleResp:
-    properties:
-      data:
-        $ref: '#/definitions/models.Product'
-      msg:
+      verified_at:
         type: string
     type: object
-  models.User:
+  requests.RegistRequest:
     properties:
-      age:
-        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  requests.RoleResponse:
+    properties:
+      description:
+        type: string
       id:
         type: string
       name:
         type: string
-    type: object
-  models.UserResp:
-    properties:
-      data:
+      permissions:
         items:
-          $ref: '#/definitions/models.User'
+          type: string
         type: array
-      msg:
-        type: string
-      pagination:
-        $ref: '#/definitions/models.PaginationResponse'
-    type: object
-  models.UserSingleResp:
-    properties:
-      data:
-        $ref: '#/definitions/models.User'
-      msg:
-        type: string
-    type: object
-  requests.ProductRequest:
-    properties:
-      name:
-        type: string
-      price:
-        type: number
-    type: object
-  requests.UserRequest:
-    properties:
-      age:
-        type: integer
-      name:
-        type: string
     type: object
 info:
   contact: {}
 paths:
-  /Product:
-    get:
+  /Auth/Login:
+    post:
       consumes:
       - application/json
-      description: Get all Product
+      description: login by username and password
+      parameters:
+      - description: Login data
+        in: body
+        name: LoginData
+        required: true
+        schema:
+          $ref: '#/definitions/requests.LoginReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ProductResp'
-      summary: Get all Product
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login
       tags:
-      - Product
+      - auth
+  /Auth/Profile:
+    get:
+      consumes:
+      - application/json
+      description: get user profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/requests.ProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Profile
+      tags:
+      - auth
+  /Auth/Registration:
     post:
       consumes:
       - application/json
-      description: Create an Product
+      description: register a new user
       parameters:
-      - description: The Product to create
+      - description: Register data
         in: body
-        name: input
+        name: RegisterData
         required: true
         schema:
-          $ref: '#/definitions/requests.ProductRequest'
+          $ref: '#/definitions/requests.RegistRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.GeneralResp'
-      summary: Create an Product
-      tags:
-      - Product
-  /Product/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete an Product
-      parameters:
-      - description: ID of the Product
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
           schema:
-            $ref: '#/definitions/models.GeneralResp'
-      summary: Delete an Product
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register
       tags:
-      - Product
+      - auth
+  /Auth/Verification/{id}:
     get:
       consumes:
       - application/json
-      description: Get an Product by ID
+      description: verification by user id
       parameters:
-      - description: ID of the Product
+      - description: User ID
         in: path
         name: id
         required: true
@@ -157,137 +156,53 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ProductSingleResp'
-      summary: Get an Product by ID
-      tags:
-      - Product
-    put:
-      consumes:
-      - application/json
-      description: Update an Product
-      parameters:
-      - description: ID of the Product
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: The Product to update
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/requests.ProductRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
           schema:
-            $ref: '#/definitions/models.GeneralResp'
-      summary: Update an Product
-      tags:
-      - Product
-  /User:
-    get:
-      consumes:
-      - application/json
-      description: Get all User
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.UserResp'
-      summary: Get all User
+            additionalProperties: true
+            type: object
+      summary: Verification
       tags:
-      - User
+      - auth
+  /FileUpload:
     post:
       consumes:
-      - application/json
-      description: Create an User
+      - multipart/form-data
+      description: Upload a file and return its path and URL
       parameters:
-      - description: The User to create
-        in: body
-        name: input
+      - description: File to upload
+        in: formData
+        name: file
         required: true
-        schema:
-          $ref: '#/definitions/requests.UserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.GeneralResp'
-      summary: Create an User
-      tags:
-      - User
-  /User/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete an User
-      parameters:
-      - description: ID of the User
-        in: path
-        name: id
-        required: true
-        type: integer
+        type: file
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.GeneralResp'
-      summary: Delete an User
-      tags:
-      - User
-    get:
-      consumes:
-      - application/json
-      description: Get an User by ID
-      parameters:
-      - description: ID of the User
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.UserSingleResp'
-      summary: Get an User by ID
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: File Upload
       tags:
-      - User
-    put:
-      consumes:
-      - application/json
-      description: Update an User
-      parameters:
-      - description: ID of the User
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: The User to update
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/requests.UserRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.GeneralResp'
-      summary: Update an User
-      tags:
-      - User
+      - file
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

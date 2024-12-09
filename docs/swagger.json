@@ -4,9 +4,9 @@
         "contact": {}
     },
     "paths": {
-        "/Product": {
-            "get": {
-                "description": "Get all Product",
+        "/Auth/Login": {
+            "post": {
+                "description": "login by username and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -14,20 +14,60 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "auth"
                 ],
-                "summary": "Get all Product",
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login data",
+                        "name": "LoginData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.LoginReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ProductResp"
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "Create an Product",
+            }
+        },
+        "/Auth/Profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get user profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,17 +75,47 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "auth"
                 ],
-                "summary": "Create an Product",
+                "summary": "Profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/requests.ProfileResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/Auth/Registration": {
+            "post": {
+                "description": "register a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register",
                 "parameters": [
                     {
-                        "description": "The Product to create",
-                        "name": "input",
+                        "description": "Register data",
+                        "name": "RegisterData",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/requests.ProductRequest"
+                            "$ref": "#/definitions/requests.RegistRequest"
                         }
                     }
                 ],
@@ -53,15 +123,30 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.GeneralResp"
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
             }
         },
-        "/Product/{id}": {
+        "/Auth/Verification/{id}": {
             "get": {
-                "description": "Get an Product by ID",
+                "description": "verification by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -69,13 +154,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "auth"
                 ],
-                "summary": "Get an Product by ID",
+                "summary": "Verification",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of the Product",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -85,155 +170,51 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ProductSingleResp"
+                            "type": "object",
+                            "additionalProperties": true
                         }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update an Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "summary": "Update an Product",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID of the Product",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     },
-                    {
-                        "description": "The Product to update",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/requests.ProductRequest"
+                            "type": "object",
+                            "additionalProperties": true
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.GeneralResp"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete an Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "summary": "Delete an Product",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID of the Product",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.GeneralResp"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
             }
         },
-        "/User": {
-            "get": {
-                "description": "Get all User",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get all User",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.UserResp"
-                        }
-                    }
-                }
-            },
+        "/FileUpload": {
             "post": {
-                "description": "Create an User",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload a file and return its path and URL",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "file"
                 ],
-                "summary": "Create an User",
+                "summary": "File Upload",
                 "parameters": [
                     {
-                        "description": "The User to create",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.UserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.GeneralResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/User/{id}": {
-            "get": {
-                "description": "Get an User by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get an User by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of the User",
-                        "name": "id",
-                        "in": "path",
+                        "type": "file",
+                        "description": "File to upload",
+                        "name": "file",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -241,76 +222,15 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserSingleResp"
+                            "type": "object",
+                            "additionalProperties": true
                         }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update an User",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Update an User",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID of the User",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     },
-                    {
-                        "description": "The User to update",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/requests.UserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.GeneralResp"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete an User",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete an User",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID of the User",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.GeneralResp"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -318,133 +238,80 @@
         }
     },
     "definitions": {
-        "models.GeneralResp": {
+        "requests.LoginReq": {
             "type": "object",
             "properties": {
-                "msg": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
         },
-        "models.PaginationResponse": {
+        "requests.ProfileResponse": {
             "type": "object",
             "properties": {
-                "limit": {
-                    "type": "integer"
+                "email": {
+                    "type": "string"
                 },
-                "offset": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Product": {
-            "type": "object",
-            "properties": {
                 "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductResp": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Product"
-                    }
+                "role": {
+                    "$ref": "#/definitions/requests.RoleResponse"
                 },
-                "msg": {
+                "role_id": {
                     "type": "string"
                 },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationResponse"
-                }
-            }
-        },
-        "models.ProductSingleResp": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.Product"
-                },
-                "msg": {
+                "verified_at": {
                     "type": "string"
                 }
             }
         },
-        "models.User": {
+        "requests.RegistRequest": {
             "type": "object",
             "properties": {
-                "age": {
-                    "type": "integer"
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.RoleResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
-                }
-            }
-        },
-        "models.UserResp": {
-            "type": "object",
-            "properties": {
-                "data": {
+                },
+                "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.User"
+                        "type": "string"
                     }
-                },
-                "msg": {
-                    "type": "string"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationResponse"
                 }
             }
-        },
-        "models.UserSingleResp": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "msg": {
-                    "type": "string"
-                }
-            }
-        },
-        "requests.ProductRequest": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "requests.UserRequest": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

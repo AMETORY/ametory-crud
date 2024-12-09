@@ -115,6 +115,7 @@ func Create{{ .ModelName }}(c *gin.Context) {
 // @Param input body requests.{{.ModelName}}Request true "The {{ .ModelName }} to update"
 // @Success 200 {object}  mdl.GeneralResp
 // @Router /{{ .ModelName }}/{id} [put]
+// @Security BearerAuth
 func Update{{ .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
     var input mdl.{{.ModelName}}

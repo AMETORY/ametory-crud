@@ -9,10 +9,10 @@ import (
 
 func init() {
 	Register("MiscRoutes", func(router *gin.RouterGroup) {
-		var group = router.Group("Misc")
-		group.Use(middlewares.AuthMiddleware())
+		// var group = router.Group("Misc")
+		router.Use(middlewares.AuthMiddleware())
 		{
-			group.POST("FileUpload", controllers.FileUpload)
+			router.POST("FileUpload", controllers.FileUpload)
 		}
 	})
 }

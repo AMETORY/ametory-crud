@@ -20,6 +20,9 @@ func init() {
 
 }
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 
 	// Use config values
