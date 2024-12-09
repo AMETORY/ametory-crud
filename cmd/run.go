@@ -29,6 +29,9 @@ var runCmd = &cobra.Command{
 		database.ConnectDatabase()
 		database.InitRedis()
 		services.InitMail()
+		if config.App.Server.StorageProvider == "google" {
+			services.InitFirebaseApp()
+		}
 
 		gocron.Every(5).Seconds().Do(workers.SendRegMail)
 		gocron.Start()
