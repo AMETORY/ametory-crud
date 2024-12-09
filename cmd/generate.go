@@ -98,7 +98,7 @@ func generateModel(modelName string, fields []Field, IsHasTime bool) error {
 		permission := models.Permission{
 			Name:        fmt.Sprintf("%s %s", cases.Title(language.English).String(modelName), cases.Title(language.English).String(crudMethod)),
 			Description: fmt.Sprintf("Permission to %s %s", crudMethod, modelName),
-			Key:         fmt.Sprintf("%s:%s", strings.ToLower(crudMethod), strings.ToLower(modelName)),
+			Key:         fmt.Sprintf("%s:%s", strings.ToLower(crudMethod), ToSnakeCase(modelName)),
 			Group:       ToPascalCase(modelName),
 		}
 		permission.ID = models.GenUUID()
