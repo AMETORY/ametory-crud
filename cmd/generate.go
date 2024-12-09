@@ -94,6 +94,7 @@ func generateModel(modelName string, fields []Field) error {
 			Key:         fmt.Sprintf("%s:%s", strings.ToLower(crudMethod), strings.ToLower(modelName)),
 			Group:       strings.ToUpper(strings.ReplaceAll(modelName, " ", "_")),
 		}
+		permission.ID = models.GenUUID()
 
 		// Assuming you have a function to add permissions to your system
 		err := database.DB.Create(&permission).Error

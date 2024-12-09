@@ -10,7 +10,7 @@ import (
 func init() {
 	Register("RoleRoutes", func(router *gin.RouterGroup) {
 		var group = router.Group("Role")
-		group.Use(middlewares.SuperAdminMiddleware())
+		group.Use(middlewares.AuthMiddleware(), middlewares.SuperAdminMiddleware())
 		{
 			group.GET("", controllers.GetRoles)
 			group.GET("/:id", controllers.GetOneRole)

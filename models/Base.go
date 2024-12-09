@@ -42,5 +42,9 @@ func FindUserByID(id string) (*Auth, error) {
 }
 
 func generateUUID() string {
+	return GenUUID()
+}
+
+func GenUUID() string {
 	return uuid.NewString()
 }

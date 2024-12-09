@@ -64,9 +64,20 @@ func CreateRole(c *gin.Context) {
 		return
 	}
 
-	if err := db.DB.Create(&input).Error; err != nil {
+	permissions := []models.Permission{}
+	for _, p := range input.Permissions {
+		var permission models.Permission
+		db.DB.Where("key = ?", p.Key).First(&permission)
+		permissions = append(permissions, permission)
+	}
+
+	if err := db.DB.Omit("Permissions").Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	if len(permissions) > 0 {
+		db.DB.Model(&input).Association("Permissions").Append(permissions)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Created role successfully"})

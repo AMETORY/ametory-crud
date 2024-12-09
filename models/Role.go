@@ -1,6 +1,7 @@
 package models
 
 import (
+	db "ametory-crud/database"
 	"ametory-crud/requests"
 	"encoding/json"
 
@@ -21,6 +22,17 @@ func (p *Role) BeforeCreate(tx *gorm.DB) error {
 }
 
 func (p Role) MarshalJSON() ([]byte, error) {
+
+	if p.IsSuperAdmin {
+		var allPermissions []Permission
+		db.DB.Find(&allPermissions)
+		p.Permissions = allPermissions
+	} else {
+		var rolePermissions []Permission
+		db.DB.Model(&p).Association("Permissions").Find(&rolePermissions)
+		p.Permissions = rolePermissions
+	}
+
 	permissions := make([]string, len(p.Permissions))
 	for i, perm := range p.Permissions {
 		permissions[i] = perm.Key
@@ -51,6 +63,18 @@ func (p *Role) UnmarshalJSON(data []byte) error {
 	}
 	p.Name = req.Name
 	p.Description = req.Description
+
+	if len(req.Permissions) > 0 {
+		var permissions []Permission
+		for _, key := range req.Permissions {
+			var permission Permission = Permission{
+				Key: key,
+			}
+			db.DB.Where("key = ?", key).First(&permission)
+			permissions = append(permissions, permission)
+		}
+		p.Permissions = permissions
+	}
 	return nil
 }
 
@@ -63,6 +87,6 @@ type Permission struct {
 }
 
 func (p *Permission) BeforeCreate(tx *gorm.DB) error {
-	p.ID = generateUUID()
+	// p.ID = generateUUID()
 	return nil
 }
