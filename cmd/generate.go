@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"ametory-crud/config"
 	"ametory-crud/database"
 	"ametory-crud/models"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -115,6 +117,22 @@ func generateModel(modelName string, fields []Field, IsHasTime bool) error {
 		ModelName: modelName,
 		Fields:    fields,
 		IsHasTime: IsHasTime,
+	}
+
+	if config.App.Database.Type == "postgres" {
+		for i, v := range fields {
+			if strings.Contains(v.DBType, "enum") {
+				enumTypeName := fmt.Sprintf("%s_%s_enum", ToSnakeCase(modelName), ToSnakeCase(v.Name))
+				cleanDBType := strings.ReplaceAll(v.DBType, "NOT NULL", "")
+				cleanDBType = regexp.MustCompile(`DEFAULT '([^']*)'`).ReplaceAllString(cleanDBType, "")
+				cleanDBType = strings.ReplaceAll(cleanDBType, "DEFAULT", "")
+				rawSQL := fmt.Sprintf("CREATE TYPE %s AS %s;", enumTypeName, cleanDBType)
+				if err := database.DB.Exec(rawSQL).Error; err != nil {
+					log.Printf("Error creating enum type: %v", err)
+				}
+				fields[i].DBType = enumTypeName
+			}
+		}
 	}
 
 	// Open the template file

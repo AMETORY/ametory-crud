@@ -22,6 +22,8 @@ var generateExcelCmd = &cobra.Command{
 			fmt.Println("Please provide the path to the Excel file using --path")
 			return
 		}
+
+		// fmt.Println(excelPath)
 		database.ConnectDatabase()
 		generateFromExcel(excelPath)
 	},

@@ -12,10 +12,15 @@ var migrateCmd = &cobra.Command{
 	Short: "Run database migrations",
 	Run: func(cmd *cobra.Command, args []string) {
 		db.ConnectDatabase()
-		mdl.MigrateDatabase()
+		if init, _ := cmd.Flags().GetBool("init"); init {
+			mdl.InitDatabase()
+		} else {
+			mdl.MigrateDatabase()
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(migrateCmd)
+	migrateCmd.Flags().BoolP("init", "i", false, "Initialize the database")
 }

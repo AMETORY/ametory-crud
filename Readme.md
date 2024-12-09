@@ -118,6 +118,23 @@ For PostgreSQL:
 DB_TYPE=postgres
 ```
 ## Usage
+
+### 3. Initialize Migrations
+If you need to initialize migrations, use the following command:
+
+```bash
+go run main.go migrate --init true
+```
+This will initialize the migration setup for your database.
+
+### 4. Migrate Database
+To apply migrations to the database, use the following command:
+
+```bash
+go run main.go migrate
+```
+This will apply all migrations to your database, ensuring the tables are created based on the models.
+
 ### 1. Run Server
 To start the Gin server, use the following command:
 
