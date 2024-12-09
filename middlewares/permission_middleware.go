@@ -35,6 +35,35 @@ func PermissionMiddleware(requiredPermissions []string) gin.HandlerFunc {
 	}
 }
 
+// SuperAdminMiddleware checks if the user is a super admin
+func SuperAdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authData, exists := c.Get("auth")
+		if !exists {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Authentication data not found"})
+			c.Abort()
+			return
+		}
+
+		auth := authData.(models.Auth)
+
+		isSuperAdmin, err := auth.IsSuperAdmin()
+		if err != nil {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
+			c.Abort()
+			return
+		}
+
+		if !isSuperAdmin {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
 // hasRequiredPermissions checks if the user has all required permissions
 func hasRequiredPermissions(userPermissions []string, requiredPermissions []string) bool {
 	permissionMap := make(map[string]bool)

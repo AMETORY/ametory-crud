@@ -4,6 +4,8 @@ import (
 	"ametory-crud/config"
 	db "ametory-crud/database"
 	"ametory-crud/utils"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,7 +18,7 @@ type Auth struct {
 	Password   string     `json:"password"`
 	VerifiedAt *time.Time `json:"verified_at"`
 	RoleID     *string    `json:"role_id"`
-	Role       Role       `gorm:"foreignKey:RoleID" json:"role"`
+	Role       *Role      `gorm:"foreignKey:RoleID" json:"role,omitempty"`
 }
 
 func (Auth) TableName() string {
@@ -66,4 +68,31 @@ func (a *Auth) GetPermissions() ([]string, error) {
 		keys = append(keys, perm.Key)
 	}
 	return keys, nil
+}
+
+func (a *Auth) IsSuperAdmin() (bool, error) {
+	var role Role
+	if err := db.DB.First(&role, "id = ?", a.RoleID).Error; err != nil {
+		return false, err
+	}
+	return role.IsSuperAdmin, nil
+}
+
+func (a Auth) MarshalJSON() ([]byte, error) {
+	type Alias Auth
+	var role *Role
+	if a.RoleID != nil {
+		var roleId string = *a.RoleID
+		fmt.Println("ROLE ID", roleId)
+		db.DB.Debug().First(&role, "id = ?", roleId)
+	}
+	return json.Marshal(&struct {
+		Alias
+		Password string `json:"password,omitempty"`
+		Role     *Role  `json:"role"`
+	}{
+		Alias:    (Alias)(a),
+		Password: "",
+		Role:     role,
+	})
 }

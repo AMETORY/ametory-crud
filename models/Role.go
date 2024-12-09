@@ -21,10 +21,15 @@ func (p *Role) BeforeCreate(tx *gorm.DB) error {
 }
 
 func (p Role) MarshalJSON() ([]byte, error) {
+	permissions := make([]string, len(p.Permissions))
+	for i, perm := range p.Permissions {
+		permissions[i] = perm.Key
+	}
 	return json.Marshal(requests.RoleResponse{
 		ID:          p.ID,
 		Name:        p.Name,
 		Description: p.Description,
+		Permissions: permissions,
 	})
 }
 

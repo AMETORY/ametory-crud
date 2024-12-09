@@ -89,6 +89,18 @@ func RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }
 
+func Profile(c *gin.Context) {
+	authData, exists := c.Get("auth")
+	if !exists {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Authentication data not found"})
+		c.Abort()
+		return
+	}
+
+	auth := authData.(models.Auth)
+
+	c.JSON(http.StatusOK, auth)
+}
 func Verification(c *gin.Context) {
 	userID := c.Param("id")
 	auth, err := models.FindUserByID(userID)
