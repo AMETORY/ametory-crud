@@ -80,6 +80,16 @@ s3:
   secret_key: "your_secret_key"
   bucket: "your_bucket_name"
   region: "us-west-1"
+  folder: ""
+  public_url: ""
+
+google:
+  firebase_storage_bucket: ""
+  firebase_credential_file: ""
+  firebase_folder_file: ""
+  client_id: ""
+  client_secret: ""
+  redirect_url: ""
 
 es:
   host: "localhost"
