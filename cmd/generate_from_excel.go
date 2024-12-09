@@ -65,6 +65,18 @@ func generateFromExcel(path string) error {
 				DBType:    row[3],
 				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(row[1], "_", "")),
 			}
+			if len(row) > 4 {
+				fmt.Println(row[0], row[4])
+				if row[4] != "" {
+					field.NotNull = ";NOT NULL"
+				}
+			}
+			if len(row) > 5 {
+				if row[5] != "" {
+					field.Default = " ;DEFAULT " + row[5]
+				}
+			}
+
 			fields = append(fields, field)
 
 		}

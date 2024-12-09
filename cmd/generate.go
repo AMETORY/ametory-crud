@@ -42,6 +42,18 @@ var generateCmd = &cobra.Command{
 				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(parts[0], " ", "_")),
 			}
 
+			if len(parts) > 4 {
+				fmt.Println(parts[0], parts[4])
+				if parts[4] != "" {
+					field.NotNull = ";NOT NULL"
+				}
+			}
+			if len(parts) > 5 {
+				if parts[5] != "" {
+					field.Default = " ;DEFAULT " + parts[5]
+				}
+			}
+
 			if parts[1] == "time.Time" {
 				isHasTime = true
 			}
@@ -89,6 +101,8 @@ type Field struct {
 	Type      string
 	DBType    string
 	Tag       string
+	NotNull   string
+	Default   string
 }
 
 func generateModel(modelName string, fields []Field, IsHasTime bool) error {

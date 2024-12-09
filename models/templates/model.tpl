@@ -13,7 +13,7 @@ import (
 
 type {{ToPascalCase .ModelName}} struct {
 	Base
-	{{range .Fields}}{{ToPascalCase .Name}} {{.Type}} `gorm:"type:{{.DBType}}" json:"{{ToSnakeCase .Tag}}"`
+	{{range .Fields}}{{ToPascalCase .Name}} {{.Type}} `gorm:"type:{{.DBType}}{{ .Default }}{{ .NotNull }}" json:"{{ToSnakeCase .Tag}}"`
 	{{end}}}
 
 func init() {
