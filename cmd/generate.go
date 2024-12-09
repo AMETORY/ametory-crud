@@ -129,7 +129,7 @@ func generateModel(modelName string, fields []Field, IsHasTime bool) error {
 	}
 
 	// Create the model file
-	fileName := fmt.Sprintf("models/%s.go", modelName)
+	fileName := fmt.Sprintf("models/%s.go", ToPascalCase(modelName))
 	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("Error creating model file: %v", err)
@@ -144,7 +144,7 @@ func generateModel(modelName string, fields []Field, IsHasTime bool) error {
 		return err
 	}
 
-	fmt.Printf("Model %s generated successfully!\n", modelName)
+	fmt.Printf("Model %s generated successfully!\n", ToPascalCase(modelName))
 	return nil
 }
 func generateRequestResponse(modelName string, fields []Field, IsHasTime bool) error {
@@ -167,7 +167,7 @@ func generateRequestResponse(modelName string, fields []Field, IsHasTime bool) e
 	}
 
 	// Create the model file
-	fileName := fmt.Sprintf("requests/%sReq.go", modelName)
+	fileName := fmt.Sprintf("requests/%sReq.go", ToPascalCase(modelName))
 	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("Error creating requests file: %v", err)
@@ -182,7 +182,7 @@ func generateRequestResponse(modelName string, fields []Field, IsHasTime bool) e
 		return err
 	}
 
-	fmt.Printf("Model %s generated successfully!\n", modelName)
+	fmt.Printf("Model %s generated successfully!\n", ToPascalCase(modelName))
 	return nil
 }
 
@@ -207,7 +207,7 @@ func generateController(feature string, fields []Field, IsHasTime bool) error {
 	}
 
 	// Create the controller file
-	fileName := fmt.Sprintf("controllers/%sController.go", feature)
+	fileName := fmt.Sprintf("controllers/%sController.go", ToPascalCase(feature))
 	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("Error creating controller file: %v", err)
@@ -222,7 +222,7 @@ func generateController(feature string, fields []Field, IsHasTime bool) error {
 		return err
 	}
 
-	fmt.Printf("Controller %s generated successfully!\n", feature)
+	fmt.Printf("Controller %s generated successfully!\n", ToPascalCase(feature))
 	return nil
 }
 
@@ -247,7 +247,7 @@ func generateRoute(feature string, IsHasTime bool) error {
 	}
 
 	// Create the controller file
-	fileName := fmt.Sprintf("routes/%sRoute.go", feature)
+	fileName := fmt.Sprintf("routes/%sRoute.go", ToPascalCase(feature))
 	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("Error creating route file: %v", err)
@@ -262,7 +262,7 @@ func generateRoute(feature string, IsHasTime bool) error {
 		return err
 	}
 
-	fmt.Printf("Controller %s generated successfully!\n", feature)
+	fmt.Printf("Controller %s generated successfully!\n", ToPascalCase(feature))
 	return nil
 }
 

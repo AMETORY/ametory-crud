@@ -16,7 +16,7 @@ import (
 // @Success 200 {object} mdl.{{ToPascalCase .ModelName }}Resp
 // @Router /{{ToPascalCase .ModelName }} [get]
 func Get{{ToPascalCase .ModelName }}(c *gin.Context) {
-    var {{ToLower .ModelName }} []mdl.{{ToPascalCase .ModelName }}
+    var {{ToSnakeCase .ModelName }} []mdl.{{ToPascalCase .ModelName }}
 
     limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
     page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -26,7 +26,7 @@ func Get{{ToPascalCase .ModelName }}(c *gin.Context) {
 
     // Get the total count of records
     var count int64
-    if err := db.DB.Model(&{{ToLower .ModelName }}).Count(&count).Error; err != nil {
+    if err := db.DB.Model(&{{ToSnakeCase .ModelName }}).Count(&count).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{
             "error": err.Error(),
         })
@@ -34,7 +34,7 @@ func Get{{ToPascalCase .ModelName }}(c *gin.Context) {
     }
 
     // Paginate
-    if err := db.DB.Limit(limit).Offset(offset).Where("name LIKE ?", "%"+search+"%").Find(&{{ToLower .ModelName }}).Error; err != nil {
+    if err := db.DB.Limit(limit).Offset(offset).Where("name LIKE ?", "%"+search+"%").Find(&{{ToSnakeCase .ModelName }}).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{
             "error": err.Error(),
         })
@@ -47,8 +47,8 @@ func Get{{ToPascalCase .ModelName }}(c *gin.Context) {
 			Limit:  limit,
 			Page:  page,
 		},
-        Message: "success retrived {{ToLower .ModelName }} data",
-		Data: {{ToLower .ModelName }},
+        Message: "success retrived {{ToSnakeCase .ModelName }} data",
+		Data: {{ToSnakeCase .ModelName }},
 	})
 }
 
@@ -62,18 +62,18 @@ func Get{{ToPascalCase .ModelName }}(c *gin.Context) {
 // @Router /{{ToPascalCase .ModelName }}/{id} [get]
 func GetOne{{ToPascalCase .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
-    var {{ToLower .ModelName }} mdl.{{ToPascalCase .ModelName }}
+    var {{ToSnakeCase .ModelName }} mdl.{{ToPascalCase .ModelName }}
 
     // Find the record by ID
-    if err := db.DB.Where("id = ?", id).First(&{{ToLower .ModelName }}).Error; err != nil {
+    if err := db.DB.Where("id = ?", id).First(&{{ToSnakeCase .ModelName }}).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Data not found"})
         return
     }
 
     // Return the found record as JSON
     c.JSON(http.StatusOK, mdl.{{ToPascalCase .ModelName }}SingleResp{
-		Message: "success retrived {{ToLower .ModelName }} data",
-		Data:    {{ToLower .ModelName }},
+		Message: "success retrived {{ToSnakeCase .ModelName }} data",
+		Data:    {{ToSnakeCase .ModelName }},
 	})
 }
 
