@@ -82,11 +82,11 @@ func GetOne{{ToPascalCase .ModelName }}(c *gin.Context) {
 // @Tags {{ToPascalCase .ModelName }}
 // @Accept  json
 // @Produce  json
-// @Param input body requests.{{.ModelName}}Request true "The {{ToPascalCase .ModelName }} to create"
+// @Param input body requests.{{ToLowerCase .ModelName}}Request true "The {{ToPascalCase .ModelName }} to create"
 // @Success 201 {object}  mdl.GeneralResp
 // @Router /{{ToPascalCase .ModelName }} [post]
 func Create{{ToPascalCase .ModelName }}(c *gin.Context) {
-    var input mdl.{{.ModelName}}
+    var input mdl.{{ToLowerCase .ModelName}}
 
     // Bind JSON to the request struct
     if err := c.ShouldBindJSON(&input); err != nil {
@@ -102,7 +102,7 @@ func Create{{ToPascalCase .ModelName }}(c *gin.Context) {
 
     // Return the response as JSON
     c.JSON(http.StatusCreated, mdl.GeneralResp{
-		Message: "Created {{.ModelName}} successfully",
+		Message: "Created {{ToLowerCase .ModelName}} successfully",
 	})
 }
 
@@ -112,13 +112,13 @@ func Create{{ToPascalCase .ModelName }}(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "ID of the {{ToPascalCase .ModelName }}"
-// @Param input body requests.{{.ModelName}}Request true "The {{ToPascalCase .ModelName }} to update"
+// @Param input body requests.{{ToLowerCase .ModelName}}Request true "The {{ToPascalCase .ModelName }} to update"
 // @Success 200 {object}  mdl.GeneralResp
 // @Router /{{ToPascalCase .ModelName }}/{id} [put]
 // @Security BearerAuth
 func Update{{ToPascalCase .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
-    var input mdl.{{.ModelName}}
+    var input mdl.{{ToLowerCase .ModelName}}
 
     // Bind JSON to the request struct
     if err := c.ShouldBindJSON(&input); err != nil {
@@ -127,7 +127,7 @@ func Update{{ToPascalCase .ModelName }}(c *gin.Context) {
     }
 
     // Before update, make sure the data is exist
-    var data mdl.{{.ModelName}}
+    var data mdl.{{ToLowerCase .ModelName}}
     if err := db.DB.Where("id = ?", id).First(&data).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Data not found"})
         return
@@ -154,7 +154,7 @@ func Update{{ToPascalCase .ModelName }}(c *gin.Context) {
 func Delete{{ToPascalCase .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
     // Before delete, make sure the data exists
-    var data mdl.{{.ModelName}}
+    var data mdl.{{ToLowerCase .ModelName}}
     if err := db.DB.Where("id = ?", id).First(&data).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Data not found"})
         return
