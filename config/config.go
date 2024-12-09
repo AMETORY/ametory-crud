@@ -8,15 +8,16 @@ import (
 
 // ServerConfiguration holds the server-related config values
 type ServerConfiguration struct {
-	AppName     string `mapstructure:"app_name"`
-	AppDesc     string `mapstructure:"app_desc"`
-	Version     string `mapstructure:"version"`
-	ApiURL      string `mapstructure:"api_url"`
-	FrontEndURL string `mapstructure:"front_end_url"`
-	Host        string `mapstructure:"host"`
-	Port        string `mapstructure:"port"`
-	SecretKey   string `mapstructure:"secret_key"`
-	ExpiredJWT  int    `mapstructure:"expired_jwt"`
+	AppName         string `mapstructure:"app_name"`
+	AppDesc         string `mapstructure:"app_desc"`
+	Version         string `mapstructure:"version"`
+	ApiURL          string `mapstructure:"api_url"`
+	FrontEndURL     string `mapstructure:"front_end_url"`
+	Host            string `mapstructure:"host"`
+	Port            string `mapstructure:"port"`
+	SecretKey       string `mapstructure:"secret_key"`
+	ExpiredJWT      int    `mapstructure:"expired_jwt"`
+	StorageProvider string `mapstructure:"storage_provider"`
 }
 
 // DatabaseConfiguration holds the database-related config values
@@ -52,6 +53,8 @@ type S3Configuration struct {
 	SecretKey string `mapstructure:"secret_key"`
 	Bucket    string `mapstructure:"bucket"`
 	Region    string `mapstructure:"region"`
+	Folder    string `mapstructure:"folder"`
+	PublicURL string `mapstructure:"public_url"`
 }
 
 // ElasticSearchConfiguration holds the ES-related config values
@@ -75,9 +78,20 @@ type TwilioSMSGateway struct {
 	PhoneNumber string `mapstructure:"phone_number"`
 }
 
+// GoogleConfiguration holds the Google config values
+type GoogleConfiguration struct {
+	FirebaseStorageBucket  string `mapstructure:"firebase_storage_bucket"`
+	FirebaseCredentialFile string `mapstructure:"firebase_credential_file"`
+	FirebaseFolderFile     string `mapstructure:"firebase_folder_file"`
+	ClientID               string `mapstructure:"client_id"`
+	ClientSecret           string `mapstructure:"client_secret"`
+	RedirectURL            string `mapstructure:"redirect_url"`
+}
+
 // Configuration holds all configurations from YAML
 type Configuration struct {
 	Server    ServerConfiguration        `mapstructure:"server"`
+	Google    GoogleConfiguration        `mapstructure:"google"`
 	Database  DatabaseConfiguration      `mapstructure:"database"`
 	Scheduler SchedulerConfiguration     `mapstructure:"scheduler"`
 	Mailer    MailerConfiguration        `mapstructure:"mailer"`

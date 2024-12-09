@@ -2,6 +2,7 @@ package utils
 
 import (
 	"ametory-crud/config"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -37,4 +38,18 @@ func GenerateRandomString(length int) string {
 		b[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(b)
+}
+
+func GetCurrentTimestamp() int64 {
+	return time.Now().Unix()
+}
+
+func GetFileUrl(filename string) string {
+	if config.App.Server.StorageProvider == "google" {
+		return fmt.Sprintf("https://storage.googleapis.com/%s/%s", config.App.Google.FirebaseStorageBucket, filename)
+	}
+	if config.App.Server.StorageProvider == "s3" {
+		return fmt.Sprintf("%s/%s", config.App.S3.PublicURL, filename)
+	}
+	return fmt.Sprintf("%s/%s", config.App.Server.ApiURL, filename)
 }

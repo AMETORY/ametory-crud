@@ -92,6 +92,7 @@ func startServer() {
 	apiV1 := r.Group("/api/v1")
 
 	routes.RegisterRoutes(apiV1)
+	r.Static("/assets", "./assets")
 
 	fmt.Printf("Server running on http://localhost:%s\n", config.App.Server.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", config.App.Server.Port), r))
