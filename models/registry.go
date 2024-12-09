@@ -11,10 +11,14 @@ func RegisterModel(model interface{}) {
 	Models = append(Models, model)
 }
 
-func MigrateDatabase() {
+func InitDatabase() {
 	db.DB.AutoMigrate(&Auth{})
 	db.DB.AutoMigrate(&Role{})
 	db.DB.AutoMigrate(&Permission{})
+
+}
+func MigrateDatabase() {
+
 	for _, model := range Models {
 		db.DB.AutoMigrate(model)
 	}
