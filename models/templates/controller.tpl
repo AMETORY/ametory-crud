@@ -8,15 +8,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-// @Summary Get all {{ .ModelName }}
-// @Description Get all {{ .ModelName }}
-// @Tags {{ .ModelName }}
+// @Summary Get all {{ToPascalCase .ModelName }}
+// @Description Get all {{ToPascalCase .ModelName }}
+// @Tags {{ToPascalCase .ModelName }}
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} mdl.{{ .ModelName }}Resp
-// @Router /{{ .ModelName }} [get]
-func Get{{ .ModelName }}(c *gin.Context) {
-    var {{ .ModelName | ToLower }} []mdl.{{ .ModelName }}
+// @Success 200 {object} mdl.{{ToPascalCase .ModelName }}Resp
+// @Router /{{ToPascalCase .ModelName }} [get]
+func Get{{ToPascalCase .ModelName }}(c *gin.Context) {
+    var {{ToLower .ModelName }} []mdl.{{ToPascalCase .ModelName }}
 
     limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
     page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -26,7 +26,7 @@ func Get{{ .ModelName }}(c *gin.Context) {
 
     // Get the total count of records
     var count int64
-    if err := db.DB.Model(&{{ .ModelName | ToLower }}).Count(&count).Error; err != nil {
+    if err := db.DB.Model(&{{ToLower .ModelName }}).Count(&count).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{
             "error": err.Error(),
         })
@@ -34,58 +34,58 @@ func Get{{ .ModelName }}(c *gin.Context) {
     }
 
     // Paginate
-    if err := db.DB.Limit(limit).Offset(offset).Where("name LIKE ?", "%"+search+"%").Find(&{{ .ModelName | ToLower }}).Error; err != nil {
+    if err := db.DB.Limit(limit).Offset(offset).Where("name LIKE ?", "%"+search+"%").Find(&{{ToLower .ModelName }}).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{
             "error": err.Error(),
         })
         return
     }
 
-    c.JSON(http.StatusOK, mdl.{{ .ModelName }}Resp{
+    c.JSON(http.StatusOK, mdl.{{ToPascalCase .ModelName }}Resp{
 		Pagination: mdl.PaginationResponse{
 			Total:  count,
 			Limit:  limit,
 			Page:  page,
 		},
-        Message: "success retrived {{ .ModelName | ToLower }} data",
-		Data: {{ .ModelName | ToLower }},
+        Message: "success retrived {{ToLower .ModelName }} data",
+		Data: {{ToLower .ModelName }},
 	})
 }
 
-// @Summary Get an {{ .ModelName }} by ID
-// @Description Get an {{ .ModelName }} by ID
-// @Tags {{ .ModelName }}
+// @Summary Get an {{ToPascalCase .ModelName }} by ID
+// @Description Get an {{ToPascalCase .ModelName }} by ID
+// @Tags {{ToPascalCase .ModelName }}
 // @Accept  json
 // @Produce  json
-// @Param id path string true "ID of the {{ .ModelName }}"
-// @Success 200 {object} mdl.{{ .ModelName }}SingleResp
-// @Router /{{ .ModelName }}/{id} [get]
-func GetOne{{ .ModelName }}(c *gin.Context) {
+// @Param id path string true "ID of the {{ToPascalCase .ModelName }}"
+// @Success 200 {object} mdl.{{ToPascalCase .ModelName }}SingleResp
+// @Router /{{ToPascalCase .ModelName }}/{id} [get]
+func GetOne{{ToPascalCase .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
-    var {{ .ModelName | ToLower }} mdl.{{ .ModelName }}
+    var {{ToLower .ModelName }} mdl.{{ToPascalCase .ModelName }}
 
     // Find the record by ID
-    if err := db.DB.Where("id = ?", id).First(&{{ .ModelName | ToLower }}).Error; err != nil {
+    if err := db.DB.Where("id = ?", id).First(&{{ToLower .ModelName }}).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Data not found"})
         return
     }
 
     // Return the found record as JSON
-    c.JSON(http.StatusOK, mdl.{{ .ModelName }}SingleResp{
-		Message: "success retrived {{ .ModelName | ToLower }} data",
-		Data:    {{ .ModelName | ToLower }},
+    c.JSON(http.StatusOK, mdl.{{ToPascalCase .ModelName }}SingleResp{
+		Message: "success retrived {{ToLower .ModelName }} data",
+		Data:    {{ToLower .ModelName }},
 	})
 }
 
-// @Summary Create an {{ .ModelName }}
-// @Description Create an {{ .ModelName }}
-// @Tags {{ .ModelName }}
+// @Summary Create an {{ToPascalCase .ModelName }}
+// @Description Create an {{ToPascalCase .ModelName }}
+// @Tags {{ToPascalCase .ModelName }}
 // @Accept  json
 // @Produce  json
-// @Param input body requests.{{.ModelName}}Request true "The {{ .ModelName }} to create"
+// @Param input body requests.{{.ModelName}}Request true "The {{ToPascalCase .ModelName }} to create"
 // @Success 201 {object}  mdl.GeneralResp
-// @Router /{{ .ModelName }} [post]
-func Create{{ .ModelName }}(c *gin.Context) {
+// @Router /{{ToPascalCase .ModelName }} [post]
+func Create{{ToPascalCase .ModelName }}(c *gin.Context) {
     var input mdl.{{.ModelName}}
 
     // Bind JSON to the request struct
@@ -106,17 +106,17 @@ func Create{{ .ModelName }}(c *gin.Context) {
 	})
 }
 
-// @Summary Update an {{ .ModelName }}
-// @Description Update an {{ .ModelName }}
-// @Tags {{ .ModelName }}
+// @Summary Update an {{ToPascalCase .ModelName }}
+// @Description Update an {{ToPascalCase .ModelName }}
+// @Tags {{ToPascalCase .ModelName }}
 // @Accept  json
 // @Produce  json
-// @Param id path int true "ID of the {{ .ModelName }}"
-// @Param input body requests.{{.ModelName}}Request true "The {{ .ModelName }} to update"
+// @Param id path int true "ID of the {{ToPascalCase .ModelName }}"
+// @Param input body requests.{{.ModelName}}Request true "The {{ToPascalCase .ModelName }} to update"
 // @Success 200 {object}  mdl.GeneralResp
-// @Router /{{ .ModelName }}/{id} [put]
+// @Router /{{ToPascalCase .ModelName }}/{id} [put]
 // @Security BearerAuth
-func Update{{ .ModelName }}(c *gin.Context) {
+func Update{{ToPascalCase .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
     var input mdl.{{.ModelName}}
 
@@ -140,18 +140,18 @@ func Update{{ .ModelName }}(c *gin.Context) {
     }
 
     // Return the response as JSON
-    c.JSON(http.StatusOK, gin.H{"message": "Updated {{ .ModelName }} successfully"})
+    c.JSON(http.StatusOK, gin.H{"message": "Updated {{ToPascalCase .ModelName }} successfully"})
 }
 
-// @Summary Delete an {{ .ModelName }}
-// @Description Delete an {{ .ModelName }}
-// @Tags {{ .ModelName }}
+// @Summary Delete an {{ToPascalCase .ModelName }}
+// @Description Delete an {{ToPascalCase .ModelName }}
+// @Tags {{ToPascalCase .ModelName }}
 // @Accept  json
 // @Produce  json
-// @Param id path int true "ID of the {{ .ModelName }}"
+// @Param id path int true "ID of the {{ToPascalCase .ModelName }}"
 // @Success 200 {object}  mdl.GeneralResp
-// @Router /{{ .ModelName }}/{id} [delete]
-func Delete{{ .ModelName }}(c *gin.Context) {
+// @Router /{{ToPascalCase .ModelName }}/{id} [delete]
+func Delete{{ToPascalCase .ModelName }}(c *gin.Context) {
     id := c.Params.ByName("id")
     // Before delete, make sure the data exists
     var data mdl.{{.ModelName}}
@@ -167,6 +167,6 @@ func Delete{{ .ModelName }}(c *gin.Context) {
     }
 
     // Return the response as JSON
-    c.JSON(http.StatusOK, gin.H{"message": "Deleted {{ .ModelName }} successfully"})
+    c.JSON(http.StatusOK, gin.H{"message": "Deleted {{ToPascalCase .ModelName }} successfully"})
 }
 

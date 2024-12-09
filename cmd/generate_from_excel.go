@@ -64,6 +64,7 @@ func generateFromExcel(path string) error {
 				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(row[1], "_", "")),
 			}
 			fields = append(fields, field)
+
 		}
 	}
 
@@ -71,16 +72,22 @@ func generateFromExcel(path string) error {
 
 	// Generate models based on the grouped data
 	for modelName, fields := range modelFields {
-		err := generateModel(modelName, fields)
+		isHasTime := false
+		for _, v := range fields {
+			if v.Type == "time.Time" {
+				isHasTime = true
+			}
+		}
+		err := generateModel(modelName, fields, isHasTime)
 		if err != nil {
 			log.Fatalf("Error generating model %s: %s", modelName, err)
 		}
-		err = generateRequestResponse(modelName, fields)
+		err = generateRequestResponse(modelName, fields, isHasTime)
 		if err != nil {
 			log.Fatalf("Error generating request %s: %s", modelName, err)
 		}
-		generateController(modelName, fields)
-		generateRoute(modelName)
+		generateController(modelName, fields, isHasTime)
+		generateRoute(modelName, isHasTime)
 	}
 
 	return nil

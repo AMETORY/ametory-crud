@@ -24,6 +24,7 @@ var generateCmd = &cobra.Command{
 		generateType := strings.ToLower(args[0])
 		name := cases.Title(language.English).String(args[1])
 		fields := []Field{}
+		isHasTime := false
 		for _, arg := range args[2:] {
 			parts := strings.Split(arg, ":")
 			fmt.Println(parts)
@@ -36,21 +37,26 @@ var generateCmd = &cobra.Command{
 				Name:      cases.Title(language.English).String(parts[0]),
 				Type:      parts[1],
 				DBType:    parts[2],
-				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(parts[0], "_", "")),
+				Tag:       cases.Lower(language.English).String(strings.ReplaceAll(parts[0], " ", "_")),
 			}
+
+			if parts[1] == "time.Time" {
+				isHasTime = true
+			}
+
 			fields = append(fields, field)
 		}
 		switch generateType {
 		case "model":
 
-			generateModel(name, fields)
+			generateModel(name, fields, isHasTime)
 		case "request":
 
-			generateRequestResponse(name, fields)
+			generateRequestResponse(name, fields, isHasTime)
 		case "controller":
-			generateController(name, fields)
+			generateController(name, fields, isHasTime)
 		case "route":
-			generateRoute(name)
+			generateRoute(name, isHasTime)
 
 		default:
 			fmt.Println("Invalid type. Use 'model', 'controller', or 'route'.")
@@ -71,6 +77,7 @@ func init() {
 type ModelData struct {
 	ModelName string
 	Fields    []Field
+	IsHasTime bool
 }
 
 // Field holds details about each field in the model
@@ -82,7 +89,7 @@ type Field struct {
 	Tag       string
 }
 
-func generateModel(modelName string, fields []Field) error {
+func generateModel(modelName string, fields []Field, IsHasTime bool) error {
 
 	var crudMethods = [...]string{"create", "read", "update", "delete"}
 
@@ -92,7 +99,7 @@ func generateModel(modelName string, fields []Field) error {
 			Name:        fmt.Sprintf("%s %s", cases.Title(language.English).String(modelName), cases.Title(language.English).String(crudMethod)),
 			Description: fmt.Sprintf("Permission to %s %s", crudMethod, modelName),
 			Key:         fmt.Sprintf("%s:%s", strings.ToLower(crudMethod), strings.ToLower(modelName)),
-			Group:       strings.ToUpper(strings.ReplaceAll(modelName, " ", "_")),
+			Group:       ToPascalCase(modelName),
 		}
 		permission.ID = models.GenUUID()
 
@@ -107,10 +114,15 @@ func generateModel(modelName string, fields []Field) error {
 	modelData := ModelData{
 		ModelName: modelName,
 		Fields:    fields,
+		IsHasTime: IsHasTime,
 	}
 
 	// Open the template file
-	tmpl, err := template.ParseFiles("models/templates/model.tpl") // ensure template file exists
+	tmpl, err := template.New("model.tpl").Funcs(template.FuncMap{
+		"ToLower":      strings.ToLower,
+		"ToPascalCase": ToPascalCase,
+		"ToSnakeCase":  ToSnakeCase,
+	}).ParseFiles("models/templates/model.tpl") // ensure template file exists
 	if err != nil {
 		log.Fatalf("Error loading template: %v", err)
 		return err
@@ -135,16 +147,19 @@ func generateModel(modelName string, fields []Field) error {
 	fmt.Printf("Model %s generated successfully!\n", modelName)
 	return nil
 }
-func generateRequestResponse(modelName string, fields []Field) error {
+func generateRequestResponse(modelName string, fields []Field, IsHasTime bool) error {
 	// Define the model data
 	modelData := ModelData{
 		ModelName: modelName,
 		Fields:    fields,
+		IsHasTime: IsHasTime,
 	}
 
 	// Open the template file
 	tmpl, err := template.New("request_response.tpl").Funcs(template.FuncMap{
-		"ToLower": strings.ToLower,
+		"ToLower":      strings.ToLower,
+		"ToPascalCase": ToPascalCase,
+		"ToSnakeCase":  ToSnakeCase,
 	}).ParseFiles("models/templates/request_response.tpl") // ensure template file exists
 	if err != nil {
 		log.Fatalf("Error loading template: %v", err)
@@ -172,16 +187,19 @@ func generateRequestResponse(modelName string, fields []Field) error {
 }
 
 // Fungsi untuk menghasilkan file controller
-func generateController(feature string, fields []Field) error {
+func generateController(feature string, fields []Field, IsHasTime bool) error {
 	// Define the controller data
 	modelData := ModelData{
 		ModelName: feature,
 		Fields:    fields,
+		IsHasTime: IsHasTime,
 	}
 
 	// Open the template file
 	tmpl, err := template.New("controller.tpl").Funcs(template.FuncMap{
-		"ToLower": strings.ToLower,
+		"ToLower":      strings.ToLower,
+		"ToPascalCase": ToPascalCase,
+		"ToSnakeCase":  ToSnakeCase,
 	}).ParseFiles("models/templates/controller.tpl") // ensure template file exists
 	if err != nil {
 		log.Fatalf("Error loading template: %v", err)
@@ -209,16 +227,19 @@ func generateController(feature string, fields []Field) error {
 }
 
 // Fungsi untuk menghasilkan file route
-func generateRoute(feature string) error {
+func generateRoute(feature string, IsHasTime bool) error {
 
 	// Define the controller data
 	modelData := ModelData{
 		ModelName: feature,
+		IsHasTime: IsHasTime,
 	}
 
 	// Open the template file
 	tmpl, err := template.New("route.tpl").Funcs(template.FuncMap{
-		"ToLower": strings.ToLower,
+		"ToLower":      strings.ToLower,
+		"ToPascalCase": ToPascalCase,
+		"ToSnakeCase":  ToSnakeCase,
 	}).ParseFiles("models/templates/route.tpl") // ensure template file exists
 	if err != nil {
 		log.Fatalf("Error loading template: %v", err)
@@ -243,4 +264,14 @@ func generateRoute(feature string) error {
 
 	fmt.Printf("Controller %s generated successfully!\n", feature)
 	return nil
+}
+
+// ToPascalCase converts a string to Pascal case
+func ToPascalCase(str string) string {
+	return strings.ReplaceAll(cases.Title(language.English).String(str), " ", "")
+}
+
+// ToSnakeCase converts a string to snake case
+func ToSnakeCase(str string) string {
+	return strings.ToLower(strings.ReplaceAll(str, " ", "_"))
 }

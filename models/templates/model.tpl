@@ -5,46 +5,50 @@ import (
 	"encoding/json"
 	"gorm.io/gorm"
 	"ametory-crud/requests"
+{{if .IsHasTime}}
+	"time"
+{{end}}
+
 )
 
-type {{.ModelName}} struct {
+type {{ToPascalCase .ModelName}} struct {
 	Base
-	{{range .Fields}}{{.Name}} {{.Type}} `gorm:"type:{{.DBType}}" json:"{{.Tag}}"`
+	{{range .Fields}}{{ToPascalCase .Name}} {{.Type}} `gorm:"type:{{.DBType}}" json:"{{ToSnakeCase .Tag}}"`
 	{{end}}}
 
 func init() {
-	RegisterModel(&{{.ModelName}}{})
+	RegisterModel(&{{ToPascalCase .ModelName}}{})
 }
 
-func (p *{{.ModelName}}) BeforeCreate(tx *gorm.DB) error {
+func (p *{{ToPascalCase .ModelName}}) BeforeCreate(tx *gorm.DB) error {
 	p.ID = generateUUID()
 	return nil
 }
 
-func (p {{.ModelName}}) MarshalJSON() ([]byte, error) {
-	return json.Marshal(requests.{{.ModelName}}Response{
+func (p {{ToPascalCase .ModelName}}) MarshalJSON() ([]byte, error) {
+	return json.Marshal(requests.{{ToPascalCase .ModelName}}Response{
 		ID:       p.ID,
-		{{range .Fields}}{{.Name}}: p.{{.Name}},
+		{{range .Fields}}{{ToPascalCase .Name}}: p.{{ToPascalCase .Name}},
 		{{end}}})
 }
 
-type {{.ModelName}}Resp struct {
+type {{ToPascalCase .ModelName}}Resp struct {
 	Pagination 	PaginationResponse 	`json:"pagination"`
-	Data		[]{{.ModelName}} 	`json:"data"`
+	Data		[]{{ToPascalCase .ModelName}} 	`json:"data"`
 	Message 	string 				`json:"msg"`
 }
 
-type {{.ModelName}}SingleResp struct {
-	Data		{{.ModelName}} 	`json:"data"`
+type {{ToPascalCase .ModelName}}SingleResp struct {
+	Data		{{ToPascalCase .ModelName}} 	`json:"data"`
 	Message 	string 				`json:"msg"`
 }
 
-func (p *{{.ModelName}}) UnmarshalJSON(data []byte) error {
-	var req requests.{{.ModelName}}Request
+func (p *{{ToPascalCase .ModelName}}) UnmarshalJSON(data []byte) error {
+	var req requests.{{ToPascalCase .ModelName}}Request
 	if err := json.Unmarshal(data, &req); err != nil {
 		return err
 	}
-	{{range .Fields}}p.{{.Name}} = req.{{.Name}}
+	{{range .Fields}}p.{{ToPascalCase .Name}} = req.{{ToPascalCase .Name}}
 	{{end}}
 	return nil
 }
