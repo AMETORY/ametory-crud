@@ -1,19 +1,23 @@
 package requests
 
+import (
+
+)
+
 // UserRequest represents the structure for User input (used for creating/updating)
 type UserRequest struct {
+	CompanyId string `json:"company_id"`
 	Name string `json:"name"`
-	Age int `json:"age"`
 	Email string `json:"email"`
-	Password string `json:"password"`
+	Role string `json:"role"`
 	}
 
 // UserResponse represents the structure for User output (used for returning data)
 type UserResponse struct {
 	ID       string `json:"id"`
+	CompanyId string `json:"company_id"`
 	Name string `json:"name"`
-	Age int `json:"age"`
 	Email string `json:"email"`
-	Password string `json:"password"`
+	Role string `json:"role"`
 	}
 

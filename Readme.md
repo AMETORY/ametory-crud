@@ -234,14 +234,14 @@ ametory-crud/
 
 #### Example Excel File
 Input Example (```data.xlsx```)
-| Model Name | Field Name | Field Type | DB Type |
-|------------|------------|------------|---------|
-| User       | ID         | int        | int     |
-| User       | Name       | string     | varchar(255) |
-| User       | Age        | int        | int     |
-| Product    | ID         | int        | int     |
-| Product    | Name       | string     | varchar(255) |
-| Product    | Price      | float      | decimal(10,2) |
+| Model Name | Field Name | Field Type | DB Type | Not Null | Default |
+|------------|------------|------------|---------|----------|---------|
+| User       | ID         | int        | int     |     v    |    1    |
+| User       | Name       | string     | varchar(255) |     |         |
+| User       | Age        | int        | int     |          |         |
+| Product    | ID         | int        | int     |          |         |
+| Product    | Name       | string     | varchar(255) |     |         |
+| Product    | Price      | float      | decimal(10,2) |    |         |
 
 #### Customization
 You can customize the templates for models, controllers, and routes by modifying the files in ```models/templates/```:
