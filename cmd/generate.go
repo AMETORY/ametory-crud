@@ -82,6 +82,7 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(generateExcelCmd)
+	rootCmd.AddCommand(geminiCmd)
 	generateExcelCmd.Flags().StringVar(&excelPath, "path", "", "Path to the Excel file")
 }
 

@@ -80,12 +80,16 @@ type TwilioSMSGateway struct {
 
 // GoogleConfiguration holds the Google config values
 type GoogleConfiguration struct {
-	FirebaseStorageBucket  string `mapstructure:"firebase_storage_bucket"`
-	FirebaseCredentialFile string `mapstructure:"firebase_credential_file"`
-	FirebaseFolderFile     string `mapstructure:"firebase_folder_file"`
-	ClientID               string `mapstructure:"client_id"`
-	ClientSecret           string `mapstructure:"client_secret"`
-	RedirectURL            string `mapstructure:"redirect_url"`
+	FirebaseStorageBucket   string `mapstructure:"firebase_storage_bucket"`
+	FirebaseCredentialFile  string `mapstructure:"firebase_credential_file"`
+	FirebaseFolderFile      string `mapstructure:"firebase_folder_file"`
+	ClientID                string `mapstructure:"client_id"`
+	ClientSecret            string `mapstructure:"client_secret"`
+	RedirectURL             string `mapstructure:"redirect_url"`
+	GeminiApiKey            string `mapstructure:"gemini_api_key"`
+	GeminiSystemInstruction string `mapstructure:"gemini_system_instruction"`
+	GeminiHistoryFile       string `mapstructure:"gemini_history_file"`
+	GeminiResponseMIMEType  string `mapstructure:"gemini_response_mime_type"`
 }
 
 // Configuration holds all configurations from YAML

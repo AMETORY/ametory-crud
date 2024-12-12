@@ -90,6 +90,10 @@ google:
   client_id: ""
   client_secret: ""
   redirect_url: ""
+  gemini_api_key: ""
+  gemini_system_instruction: ""
+  gemini_history_file: ""
+  gemini_response_mime_type: ""
 
 es:
   host: "localhost"
