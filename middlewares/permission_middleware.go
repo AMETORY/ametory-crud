@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"ametory-crud/config"
 	"ametory-crud/models"
 	"net/http"
 
@@ -14,6 +15,10 @@ func PermissionMiddleware(requiredPermissions []string) gin.HandlerFunc {
 		if !exists {
 			c.JSON(http.StatusForbidden, gin.H{"error": "Authentication data not found"})
 			c.Abort()
+			return
+		}
+		if !config.App.Server.UseACL {
+			c.Next()
 			return
 		}
 

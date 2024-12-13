@@ -18,6 +18,7 @@ type ServerConfiguration struct {
 	SecretKey       string `mapstructure:"secret_key"`
 	ExpiredJWT      int    `mapstructure:"expired_jwt"`
 	StorageProvider string `mapstructure:"storage_provider"`
+	UseACL          bool   `mapstructure:"use_acl"`
 }
 
 // DatabaseConfiguration holds the database-related config values
