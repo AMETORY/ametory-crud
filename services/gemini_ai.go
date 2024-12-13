@@ -26,7 +26,7 @@ func GeminiPrompt(input string, parts ...genai.Part) (string, error) {
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-1.5-flash")
+	model := client.GenerativeModel("gemini-1.5-flash-8b")
 
 	model.SetTemperature(1)
 	model.SetTopK(40)
@@ -79,6 +79,13 @@ func GeminiPrompt(input string, parts ...genai.Part) (string, error) {
 		}
 	}
 
+	tokResp, err := model.CountTokens(ctx, genai.Text(input))
+	if err != nil {
+		return "", errors.New("Error sending message: " + err.Error())
+	}
+
+	fmt.Println("total_tokens:", tokResp.TotalTokens)
+
 	geminiInput := append([]genai.Part{genai.Text(input)}, parts...)
 	resp, err := session.SendMessage(ctx, geminiInput...)
 	if err != nil {
@@ -86,6 +93,7 @@ func GeminiPrompt(input string, parts ...genai.Part) (string, error) {
 	}
 
 	for _, part := range resp.Candidates[0].Content.Parts {
+		fmt.Println("total response token :", resp.UsageMetadata.TotalTokenCount)
 		return fmt.Sprintf("%v\n", part), nil
 
 	}
